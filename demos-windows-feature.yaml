@@ -1,0 +1,30 @@
+---
+- name: Instalacion del servidor IIS y sus herramientas de admon (Windows Features)
+  hosts: windows
+
+  tasks:
+    - name: Instalar Windows Features (IIS + Admon Tools)
+      win_feature:
+        name:
+          - Web-Server
+          - Web-Common-Http
+          - Web-Basic-Auth
+          - Web-Asp-Net
+        state: present
+        include_management_tools: yes
+      register: result
+
+    - name: Establecer el modo de inicio del servio automatico
+      win_service:
+        name: W3SVC
+        start_mode: auto
+        state: started
+
+    - name: Reiniciar el host administrado si la instalacion requiere
+      #win_reboot:
+      #when: result.reboot_required == true
+      debug:
+        var: result
+
+...
+

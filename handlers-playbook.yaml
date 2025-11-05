@@ -1,0 +1,27 @@
+---
+- name: Instalar NGINX con handler
+  hosts: host3
+  become: yes
+
+  vars:
+    - public_port: 80
+
+  tasks:
+    - name: Instalar NGINX
+      apt:
+        name: nginx
+        state: present
+
+    - name: Modificar la configuracion de NGINX
+      template:
+        src: /etc/ansible/plantillas/nginx.conf.j2
+        dest: /etc/nginx/sites-available/default
+      notify: Reiniciar Servicios   # Se produce con changed=1
+
+  handlers:
+    - name: Reiniciar NGINX
+      service:
+        name: nginx
+        state: restarted
+      listen: Reiniciar Servicios
+...

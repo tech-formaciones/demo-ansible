@@ -1,0 +1,17 @@
+---
+- name: Playbook para instalar el software de un servidor Web
+  hosts: host2
+  become: true
+
+  tasks:
+    - name: Instalacion de nano
+      apt:
+        name: nano
+        state: present
+
+    - name: Incluir las tareas de instalcion de Apache
+      include_tasks: 
+        file: /etc/ansible/tareas/tasks_apache-install.yaml
+      vars:
+        name_var: value
+...

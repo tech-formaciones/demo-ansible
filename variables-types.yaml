@@ -1,0 +1,56 @@
+---
+- name: Ejemplos de tipos de variables
+  hosts: remotos
+
+  # ansible-playbook variables-types.yaml -e '{"lista1":["lunes", "martes", "miercoles", "jueves"]}'
+  # ansible-playbook variables-types.yaml -e '{"dicc1":{rol: "desktop", db: "sqlserver", framework: "java21"}}'
+
+  vars:
+    - lista1: ["fresa", "manzana", "melon", "naranja"]
+    - lista2:
+        - fresa
+        - manzana
+        - melon
+        - naranaja
+    - dicc1: { rol: "web", db: "mysql", framework: "php7" }
+    - dicc2:
+        rol: web
+        db: mysql
+        framework: php7
+    - frutas:
+        - fruta: fresa
+          color: rojo
+        - fruta: manzana
+          color: amarillo
+        - fruta: naranaja
+          color: naranaja
+    - una_linea: >
+        Comienzo el contenido de la linea,
+        continuo con la linea
+        y fin de la linea.
+    - varias_lineas: |
+        linea 1
+        linea 2
+        linea 3
+
+  tasks:
+    - name: Pintar el contenido de la posicion 2
+      debug:
+        msg: 'Posicion 2: {{lista1[2]}} - {{lista2[2]}}'
+
+    - name: Pintar el campo ROL
+      debug:
+        msg: "ROL: {{dicc1['rol']}} - {{dicc2['rol']}}"
+
+    - name: Pintar el contenido de la posicion 1 de frutas
+      debug:
+        msg: "{{frutas[1].fruta}} es de color {{frutas[1].color}}"
+
+    - name: Pintar linea
+      debug:
+        msg: 'Linea: {{una_linea}}'
+
+    - name: Pintar varias lineas
+      debug:
+        msg: 'Varias lineas: {{varias_lineas}}'
+...

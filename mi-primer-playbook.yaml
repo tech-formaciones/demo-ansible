@@ -1,0 +1,20 @@
+---
+- name:  Mi primer playbook, copiar un fichero
+  hosts: remotos
+  become: yes
+  vars:
+    - remote_path: /etc
+
+
+  tasks:
+    - name: Copir un fichero /etc/ansible/demos/file-demo.txt
+      copy: 
+        src: /etc/ansible/demos/file-demo.txt 
+        dest: '{{remote_path}}/file-demo.txt'
+      register: copy_result
+      ignore_errors: true
+
+    - name: Mostrar el resultado de copir /etc/ansible/demos/file-demo.txt
+      debug:
+        var: copy_result
+...

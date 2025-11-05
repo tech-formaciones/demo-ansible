@@ -1,0 +1,16 @@
+---
+- name:  Copiar ficheros utilizando varibles y plantilla Jinja2
+  hosts: remotos
+  become: yes
+  vars:
+    - remote_path: /etc
+
+
+  tasks:
+    - name: Copir un fichero /etc/ansible/demos/file-demo2.txt
+      template: 
+        src: /etc/ansible/plantillas/demo1.j2 
+        dest: '{{remote_path}}/file-demo2.txt'
+      register: copy_result
+      ignore_errors: true
+...

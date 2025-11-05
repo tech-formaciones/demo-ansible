@@ -1,0 +1,37 @@
+---
+- name: Ejemplo para condicionar la ejecucion de una tarea
+  hosts: all
+  gather_facts: yes
+
+  tasks:
+    - name: Obtener la configuracion de red en Linux
+      command: ifconfig
+      when: ansible_system == "Linux"
+      register: ifconfig_result
+      ignore_errors: yes      
+
+    - name: Obtener la configuracion de red en Windows
+      win_command: ipconfig
+      register: ipconfig_result
+      when: ansible_system == "Win32NT"
+      tags:
+        - windows
+
+    - name: Mostar el resultado de la tarea de Windows
+      debug:
+        var: ipconfig_result
+      tags:
+        - windows
+
+    - name: Mostrar el mensaje de salida en lineas [SALIDA ESTANDAR]
+      debug:
+        msg: 'Mensaje: {{ifconfig_result.stdout_lines}}'
+
+    - name: Mostrar el mensaje de salida [SALIDA ESTANDAR]
+      debug:
+        msg: 'Mensaje: {{ifconfig_result.stdout}}'
+
+    - name: Mostrar el mensaje de error [SALIDA ESTANDAR ERRORES]
+      debug:
+        msg: 'Mensaje: {{ifconfig_result.stderr}}'
+...

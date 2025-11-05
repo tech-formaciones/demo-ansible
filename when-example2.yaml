@@ -1,0 +1,84 @@
+---
+- name: Ejemplo para condicionar la ejecucion de una tarea 2
+  hosts: all
+  gather_facts: yes
+
+  tasks:
+    - name: Mostrar contenido de variables
+      debug:
+        msg: "Sistema: {{ansible_system}} - Familia: {{ansible_facts['os_family']}} - Distro: {{ansible_facts['distribution']}}"
+
+
+    - name: Instalar nano en Ubuntu/Debian
+      apt:
+        name: nano
+        state: present
+        update_cache: yes
+      when: ansible_facts['distribution'] in ['Debian', 'Ubuntu']
+      ignore_errors: yes
+      register: result_apt
+
+    - name: Instalar nano en RHEL/CentOS/AlmaLinux
+      yum:
+        name: nano
+        state: present
+        update_cache: yes
+      when: ansible_facts['distribution'] in ['CentOS', 'RedHat', 'AlmaLinux']
+      ignore_errors: yes
+      register: result_yum
+
+    - name: Descargar mediante el modulo un archivo de Windows
+      win_get_url:
+        url: https://www.7-zip.org/a/7z2501-x64.exe
+        dest: C:\Temp\7z2501-x64.exe
+      when: ansible_facts['os_family'] == "Windows"
+      tags:
+        - windows
+
+    - name: Descargar mediante el comando powershell un archivo de Windows
+      win_shell: |
+        Invoke-WebRequest -Uri https://www.7-zip.org/a/7z2501-x64.exe -OutFile C:\Temp\7z2501-x64_2.exe
+      when: ansible_facts['os_family'] == "Windows"
+      tags:
+        - windows
+
+    - name: Instalar 7Zip en Windows
+      win_package:
+        path: C:\Temp\7z2501-x64.exe
+        state: present
+        arguments: '/S'
+      when: ansible_facts['os_family'] == "Windows"
+      ignore_errors: yes
+      register: result_windows
+      tags:
+        - windows
+
+    - name: Mostrar resultados de Ubuntu\Debian
+      debug:
+        msg: >
+          {% if result_apt.failed %}
+             Fallo al instalar de NANO en {{inventory_hostname}} ({{ansible_facts['distribution']}})
+          {% else %}
+             NANO se instalo correctamente en {{inventory_hostname}} ({{ansible_facts['distribution']}})
+          {% endif %}
+      when: ansible_facts['distribution'] in ['Debian', 'Ubuntu']
+
+    - name: Mostrar resultados de RHEL/CentOS/AlmaLinux
+      debug:
+        msg: >
+          {% if result_yum.failed %}
+             Fallo al instalar de NANO en {{inventory_hostname}} ({{ansible_facts['distribution']}})
+          {% else %}
+             NANO se instalo correctamente en {{inventory_hostname}} ({{ansible_facts['distribution']}})
+          {% endif %}
+      when: ansible_facts['distribution'] in ['CentOS', 'RedHat', 'AlmaLinux']
+
+    - name: Mostrar resultados de Windows
+      debug:
+        msg: >
+          {% if result_windows.failed %}
+             Fallo al instalar de 7Zip en {{inventory_hostname}} ({{ansible_facts['distribution']}})
+          {% else %}
+             7Zip se instalo correctamente en {{inventory_hostname}} ({{ansible_facts['distribution']}})
+          {% endif %}
+      when: ansible_facts['os_family'] == "Windows"

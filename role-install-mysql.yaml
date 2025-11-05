@@ -1,0 +1,8 @@
+---
+- name: Instalacion de MySQL mediante un rol
+  hosts: host2
+  become: yes
+
+  roles:
+    - bernylinville.mysql
+...

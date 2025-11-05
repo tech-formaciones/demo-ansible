@@ -1,0 +1,44 @@
+---
+- name: Demostraciones de modulos de Ansible
+  hosts: host2
+
+  tasks:
+    - name: Copir un fichero /etc/ansible/demos/file-demo.txt con Backup
+      copy:
+        src: /etc/ansible/demos/file-demo.txt
+        dest: /etc/file-demo.txt
+        backup: yes
+
+    - name: Copiar sin fichero de origen
+      copy:
+        content: "Contenido del fichero"
+        dest: /etc/demo-file-content.txt
+
+    - name: Consultar informacion del etc/ y comprobar si existe
+      stat:
+        path: /etc/
+      register: info
+
+    - name: Consultar informacion del fichero
+      stat:
+        path: /etc/demo-file-content.txt
+      register: info
+      when: info.stat.isdir == true
+
+    - name: Comprobar si demo-file-content.txt es un directorio
+      debug:
+        msg: '/etc/demo-file-content.txt es un directorio: {{info.stat.isdir}}.'
+
+    - name: Mostar el contenido de info
+      debug:
+        var: info
+
+    - name: Ejemplo de File
+      file:
+        path: /var/log/demos
+        state: directory
+        owner: root
+        group: admins
+        mode: 777
+...
+

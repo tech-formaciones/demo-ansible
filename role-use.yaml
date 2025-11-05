@@ -1,0 +1,14 @@
+---
+- name: Instalacion de Apache mediante un rol
+  hosts: host2
+  become: yes
+
+  tasks:
+    - name: Instalar el editor nano
+      apt:
+        name: nano
+        state: present
+
+  roles:
+    - install_apache
+...

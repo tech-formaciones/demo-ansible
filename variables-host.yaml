@@ -1,0 +1,21 @@
+---
+- name:   Ejemplo de Ansible Facts
+  hosts:  ubuntuservers
+
+  tasks:
+    - name: Muestra el contenido de ansible_facts['nodename']
+      debug:
+        var: ansible_facts['nodename']
+
+    - name: Muestra el contenido de ansible_facts['hostname']
+      debug:
+        var: ansible_facts['hostname']
+
+    - name: Muestra el contenido de ansible_facts['fqdn']
+      debug:
+        var: ansible_facts['fqdn']
+
+    - name: Muestra la version de Python
+      debug:
+        msg: "Python v{{ansible_facts['python']['version']['major']}}.{{ansible_facts['python']['version']['minor']}}.{{ansible_facts['python']['version']['micro']}}-{{ansible_facts['python']['version']['releaselevel']}}"
+...
